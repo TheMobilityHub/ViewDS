@@ -1,0 +1,18 @@
+# <type>: <short description>
+# Keep it under 50 characters.
+
+
+
+
+
+
+
+
+
+
+# Commit Types:
+# - feat: A new feature
+# - fix: A bug fix
+# - docs: Documentation changes
+# - refactor: Code changes without feature or bug modifications
+# - chore: Routine tasks or configuration changes (e.g., dependency update)
