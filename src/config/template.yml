@@ -1,0 +1,106 @@
+project:
+  id: "PRJ_001"
+  name: "Vehicle_ECU_Diagnostics"
+  ecu:
+    id: "ECU_001"
+    name: "Engine_Control_Module"
+    protocols:
+      - name: "UDS"
+        id: "ISO_14229-1"
+        transport: "CAN"
+    timing_params:
+      p2_server_max: 50  # ms
+      p2_star_server_max: 5000  # ms
+
+  services:
+    - id: "SID_10"
+      name: "DiagnosticSessionControl"
+      request:
+        - parameter:
+            id: "SESSION_TYPE"
+            datatype: "UINT8"
+            value: "0x02"
+      response:
+        - parameter:
+            id: "POS_RESPONSE"
+            datatype: "UINT8"
+            value: "0x50"
+    - id: "SID_27"
+      name: "SecurityAccess"
+      request:
+        - parameter:
+            id: "REQUEST_SEED"
+            datatype: "UINT8"
+            value: "0x27 01"
+      response:
+        - parameter:
+            id: "SEED"
+            datatype: "HEX"
+            value: "0xF2 0xB3"
+
+  dtc_information:
+    - id: "P1234"
+      name: "Fuel Pump Fault"
+      status_bits:
+        TestFailed: 1
+        Pending: 0
+        Confirmed: 1
+    - id: "P5678"
+      name: "Oxygen Sensor Malfunction"
+      status_bits:
+        TestFailed: 0
+        Pending: 1
+        Confirmed: 0
+
+  data_objects:
+    - id: "DID_0x1000"
+      name: "EngineSpeed"
+      data_type: "UINT16"
+      unit: "rpm"
+      range:
+        min: 0
+        max: 8000
+    - id: "DID_0x2000"
+      name: "CoolantTemperature"
+      data_type: "INT8"
+      unit: "°C"
+      range:
+        min: -40
+        max: 125
+
+  security:
+    - level:
+        id: "LEVEL_01"
+        name: "Programming"
+        seed: "0xA1 0xB2 0xC3"
+        key: "0xDE 0xAD 0xBE 0xEF"
+
+  comm_params:
+    can_id: "0x7DF"
+    baud_rate: 500000  # 500 kbps
+
+  routines:
+    - id: "0x31"
+      name: "Fuel Pump Test"
+      start_routine: "0x01"
+      stop_routine: "0x02"
+      result_routine: "0x03"
+
+  negative_response_codes:
+    - code: "0x13"
+      description: "Incorrect Message Length"
+    - code: "0x31"
+      description: "Request Out of Range"
+
+  session_control:
+    - session:
+        id: "defaultSession"
+        name: "Default"
+        services:
+          - "0x10"
+    - session:
+        id: "extendedSession"
+        name: "Extended"
+        services:
+          - "0x27"
+          - "0x31"
